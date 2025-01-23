@@ -1,96 +1,112 @@
 "use client";
 
-import { useState , useEffect} from "react";
+import { useState } from "react";
 
 export const StepTwo = ({ setStep }) => {
   const [formValue, setFormValue] = useState({});
   const [errors, setErrors] = useState({});
-  const [b, setb] = useState(false)
-  const checkEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  const checkPhone = /^\+?\d{8}$/
+  const [isValid, setIsValid] = useState(false); // isValid нэртэй хувьсагч ашиглаж байгаа
+  const checkEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const checkPhone = /^\+?\d{8}$/;
 
-  const onContinue = () => { // Email
-    if (!formValue.Email || formValue.Email.length === 0) {
-      setErrors((prev) => ({ ...prev, Email: "Мэйл хаягаа оруулна уу" }));
-      setb(false)
-    } else if (!formValue.Email || formValue.Email.length === 0){
-       setErrors((prev) => ({ ...prev, Email: "Зөв мэйл хаяг оруулна уу" }));
-       setb(false)
-    } else {
-        setErrors((prev) => ({ ...prev, Email: "" }));
-        setb(true)
-    } // phonenumber
-    if (!formValue.PhoneNumber || formValue.PhoneNumber.length === 0) {
+  const onContinue = () => {
+    let isValidForm = true; // Тогтмол үр дүнг хадгалах хувьсагч
+
+    // Email шалгах
+    if (!formValue.Email || !checkEmail.test(formValue.Email)) {
       setErrors((prev) => ({
         ...prev,
-        PhoneNumber: "Утасны дугаараа оруулна уу."
+        Email: formValue.Email ? "Зөв мэйл хаяг оруулна уу" : "Мэйл хаягаа оруулна уу",
       }));
-      setb(false)
-    } else if (!formValue.PhoneNumber || formValue.PhoneNumber.length === 0){
-        setErrors((prev) => ({
-            ...prev,
-            PhoneNumber: "Зөв утасны дугаар оруулна уу"
-          }));
-        setb(false)
+      isValidForm = false;
     } else {
-        setErrors((prev) => ({
-            ...prev,
-            PhoneNumber: ""
-          }));
-        setb(true)
-    } // password
-    if (!formValue.Password || formValue.Password.length === 0) {
-      setErrors((prev) => ({ ...prev, Password: "Нууц үгээ оруулна уу" }));
-      setb(false)
-    } else if (!formValue.Password || formValue.Password.length === 0){
-        setErrors((prev) => ({ ...prev, Password: "6 оронтой тоо оруулна уу" }));
-        setb(false)
-    } else {
-        setErrors((prev) => ({ ...prev, Password: "" }));
-        setb(true)
-    } // confirm password 
-    if (!formValue.ConfirmPassword || formValue.ConfirmPassword.length === 0) {
-      setErrors((prev) => ({
-        ...prev,
-        ConfirmPassword: "Нууц үгээ давтаж оруулна уу"
-      }));
-      setb(false)
-    } else if(!formValue.ConfirmPassword || formValue.ConfirmPassword.length === 0){
-        setErrors((prev) => ({
-            ...prev,
-            ConfirmPassword: "Таны оруулсан нууц үг таарахгүй байна."
-        }));
-        setb(true)
-    } else {
-        setErrors((prev) => ({
-            ...prev,
-            ConfirmPassword: ""
-        }));
-        setb(true)
+      setErrors((prev) => ({ ...prev, Email: "" }));
     }
-    console.log(b)
-    if (b) {
-        setStep(3);
+
+    // Утасны дугаар шалгах
+    if (!formValue.PhoneNumber || formValue.PhoneNumber.length !== 8 || !checkPhone.test(formValue.PhoneNumber)) {
+      setErrors((prev) => ({
+        ...prev,
+        PhoneNumber: formValue.PhoneNumber ? "8 оронтой дугаар оруулна уу." : "Утасны дугаараа оруулна уу." || "Зөв утасны дугаар оруулна уу"
+      }));
+      isValidForm = false;
+    } else {
+      setErrors((prev) => ({ ...prev, PhoneNumber: "" }));
+    }
+
+    // Нууц үг шалгах
+    if (!formValue.Password || formValue.Password.length < 6) {
+      setErrors((prev) => ({
+        ...prev,
+        Password: formValue.Password ? "Нууц үг 6 оронтой байх ёстой" : "Нууц үгээ оруулна уу",
+      }));
+      isValidForm = false;
+    } else {
+      setErrors((prev) => ({ ...prev, Password: "" }));
+    }
+
+    // Давхар нууц үг шалгах
+    if (formValue.ConfirmPassword !== formValue.Password) {
+      setErrors((prev) => ({
+        ...prev,
+        ConfirmPassword: "Таны оруулсан нууц үг таарахгүй байна." 
+      }));
+      isValidForm = false;
+    } else {
+      setErrors((prev) => ({ ...prev, ConfirmPassword: "" }));
+
+    }
+
+    // Хэрвээ бүх шалгалт амжилттай бол
+    if (isValidForm) {
+      setStep(3);
     }
   };
 
-  function checkemail (email){
-    return checkEmail.test(email)
-  }
-  
-
-  const backbutton = () =>{
+  const backButton = () => {
     setStep(1);
+  };
+
+  const onEmailChange = (e) => {
+    setFormValue({ ...formValue, Email: e.target.value });
+    if (!formValue.Email || !checkEmail.test(formValue.Email)) {
+      setErrors((prev) => ({
+        ...prev,
+        Email: formValue.Email ? "" : "",
+      }));
+    }
+  }
+  const onPhoneNumberChange = (e) => {
+    setFormValue({ ...formValue, PhoneNumber: e.target.value });
+    if (!formValue.PhoneNumber || formValue.PhoneNumber.length !== 8 || !checkPhone.test(formValue.PhoneNumber)) {
+      setErrors((prev) => ({
+        ...prev,
+        PhoneNumber: formValue.PhoneNumber ? "" : "" || ""
+      }));
+    }
+  }
+  const onPasswordChange = (e) => {
+    setFormValue({ ...formValue, Password: e.target.value });
+    if (!formValue.Password || formValue.Password.length < 6) {
+      setErrors((prev) => ({
+        ...prev,
+        Password: formValue.Password ? "" : "",
+      }));
+    }
+  }
+  const onConfirmPasswordChange = (e) => {
+    setFormValue({ ...formValue, ConfirmPassword: e.target.value });
+    if (formValue.ConfirmPassword !== formValue.Password) {
+      setErrors((prev) => ({
+        ...prev,
+        ConfirmPassword: "" 
+      }));
+      isValidForm = false;
+    } 
   }
 
-  const onEmailChange = (e) =>
-    setFormValue({ ...formValue, Email: e.target.value });
-  const onPhoneNumberChange = (e) =>
-    setFormValue({ ...formValue, PhoneNumber: e.target.value });
-  const onPasswordChange = (e) =>
-    setFormValue({ ...formValue, Password: e.target.value });
-  const onConfirmPasswordChange = (e) =>
-    setFormValue({ ...formValue, ConfirmPassword: e.target.value });
+
+
 
   return (
     
@@ -180,7 +196,7 @@ export const StepTwo = ({ setStep }) => {
           )}
         </div>
         <div className="flex w-full gap-x-2 mt-auto">
-          <button onClick={backbutton} className="flex items-center justify-centert w-32 gap-x-3 rounded-md border border-[#CBD5E1] transition-all duration-300">
+          <button onClick={backButton} className="flex items-center justify-centert w-32 gap-x-3 rounded-md border border-[#CBD5E1] transition-all duration-300">
             <img src="left.png"/>
             Back
           </button>

@@ -1,38 +1,51 @@
 "use client";
 import { useState } from "react";
+
 export const StepThree = ({ setStep }) => {
   const [formValue, setFormValue] = useState({
-    profilePicture: null
+    profilePicture: null,
+    DayBirth: "",
   });
   const [errors, setErrors] = useState({});
-  const [b, setb] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(true); // Хэрэглэгчийн өгөгдлийг шалгах хувьсагч
 
-  const onContinue = () => { // birthday
+  const onContinue = () => {
+    let isValid = true; // Шалгалтын үр дүнг хадгалах хувьсагч
+
+    // Төрсөн өдрийн шалгах
     if (!formValue.DayBirth || formValue.DayBirth.length === 0) {
       setErrors((prev) => ({
         ...prev,
         DayBirth: "Төрсөн өдрөө оруулна уу",
       }));
-      setb(false);
-    } else if(!formValue.DayBirth || formValue.DayBirth.length === 0){
-      setErrors((prev) => ({ ...prev, DayBirth: "Та 18 ба түүнээс дээш настай байх ёстой." }));
-      setb(false);
+      isValid = false;
     } else {
+      const birthDate = new Date(formValue.DayBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      if (age < 18) {
+        setErrors((prev) => ({
+          ...prev,
+          DayBirth: "Та 18 ба түүнээс дээш настай байх ёстой.",
+        }));
+        isValid = false;
+      } else {
         setErrors((prev) => ({ ...prev, DayBirth: "" }));
-        setb(true);
+      }
     }
-     // image
-    if (!formValue.image || formValue.image.length === 0) {
-        setErrors((prev) => ({ ...prev, image: "Профайл зурагаа оруулна уу" }));
-        setb(false)
+
+    // Профайл зураг шалгах
+    if (!formValue.profilePicture) {
+      setErrors((prev) => ({ ...prev, image: "Профайл зурагаа оруулна уу" }));
+      isValid = false;
     } else {
-        setErrors((prev) => ({ ...prev, image: "" }));
-        setb(true)
-    } 
-    console.log(b);
-    if (b) {
+      setErrors((prev) => ({ ...prev, image: "" }));
+    }
+
+    // Хэрэв бүх шалгалт зөв бол дараагийн алхам руу шилжих
+    if (isValid) {
       setStep(4);
-    } 
+    }
   };
 
   const backbutton = () => {
@@ -41,11 +54,30 @@ export const StepThree = ({ setStep }) => {
 
   const imageOnchange = (e) => {
     setFormValue({ ...formValue, profilePicture: e.target.files[0] });
-  }
-  console.log(formValue.profilePicture)
+    if (!formValue.profilePicture) {
+      setErrors((prev) => ({ ...prev, image: "" }));
+    }
+  };
 
-  const onDayBirthChange = (e) =>
+  const onDayBirthChange = (e) => {
     setFormValue({ ...formValue, DayBirth: e.target.value });
+    if (!formValue.DayBirth || !formValue.DayBirth.length === 0) {
+      setErrors((prev) => ({
+        ...prev,
+        DayBirth: "",
+      }));
+    }
+    if (age < 18) {
+      setErrors((prev) => ({
+        ...prev,
+        DayBirth: "",
+      }));
+    }
+  };
+
+  const close = () => {
+    setFormValue({ ...formValue, profilePicture: null });
+  }
 
   return (
     <div className="flex flex-col w-[480px] min-h-[655px] p-8 bg-white rounded-lg">
@@ -60,34 +92,49 @@ export const StepThree = ({ setStep }) => {
           Please provide all current information accurately.
         </p>
       </div>
-      <div className="flex flex-col flex-grow gap-y-3">
-      <div className="space-y-2">   
-        <label className="text-sm font-semibold leading-4 text-[#334155]">
-          Date of birth
-          <span className="text-red-500">*</span>
-        </label>
-        <input
-          onChange={onDayBirthChange}
-          type="date"
-          className="w-full p-3 text-base leading-5 rounded-md outline outline-[$0CA5E9] text-[#121316]"
-        />
-        {errors.DayBirth && <p className="text-red-500">{errors.DayBirth}</p>}
-      </div>
-      <div className="space-y-2">
-        <div className="text-sm font-semibold leading-4 text-[#334155]">
-          Profile image
-        <span className="text-red-500">*</span>
-        </div>
-        <div className="flex flex-col items-center justify-center gap-y-2 cursor-pointer bg-gray-100 h-[180px] border rounded-md border-soslid">
-            <input onChange={imageOnchange} type="file" name="profileImage" />
-            
 
-           {formValue.profilePicture &&  <img src={URL.createObjectURL(formValue.profilePicture)} />} 
-           
+      <div className="flex flex-col flex-grow gap-y-3">
+        <div className="space-y-2">
+          <label className="text-sm font-semibold leading-4 text-[#334155]">
+            Date of birth
+            <span className="text-red-500">*</span>
+          </label>
+          <input
+            onChange={onDayBirthChange}
+            type="date"
+            className="w-full p-3 text-base leading-5 rounded-md outline outline-[$0CA5E9] text-[#121316]"
+          />
+          {errors.DayBirth && <p className="text-red-500">{errors.DayBirth}</p>}
         </div>
-        {errors.image && <p className="text-red-500">{errors.image}</p>}
+
+        <div className="space-y-2">
+          <div className="text-sm font-semibold leading-4 text-[#334155]">
+            Profile image
+            <span className="text-red-500">*</span>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-y-2 cursor-pointer bg-gray-100 h-[180px] border rounded-md border-soslid">
+            {formValue.profilePicture ? (
+              <>
+                <img
+                className="w-[416px] h-[180px] h-full rounded-md border-solid"
+                src={URL.createObjectURL(formValue.profilePicture)}
+              />
+                 <button onClick={close} className="absolute  w-6 h-6 bg-[#202124] rounded-full ">
+              <img className="close.png"/>
+            </button></>
+            
+            ): 
+            (<>
+              <input onChange={imageOnchange} type="file" name="profileImage" />
+            </>)
+            }
+
+         
+          </div>
+          {errors.image && <p className="text-red-500">{errors.image}</p>}
+        </div>
       </div>
-      </div>
+
       <div className="flex w-full gap-x-2 mt-auto">
         <button
           onClick={backbutton}
@@ -107,4 +154,5 @@ export const StepThree = ({ setStep }) => {
     </div>
   );
 };
+
 

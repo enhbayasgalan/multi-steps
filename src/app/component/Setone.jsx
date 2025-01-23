@@ -12,13 +12,13 @@ export const StepOne = ({ setStep }) => {
     if (!formValue.firstName || formValue.firstName.length === 0) {
       setErrors((prev) => ({ ...prev, firstName: "Нэрээ оруулна уу" }));
       seta(false);
+      
     } else {
       setErrors((prev) => ({ ...prev, firstName: "" }));
-      seta(true);
+      seta(true); 
     }
     if (!formValue.LastName || formValue.LastName.length === 0) {
       setErrors((prev) => ({ ...prev, LastName: "Овгоо оруулна уу." }));
-
       seta(false);
     } else {
       setErrors((prev) => ({ ...prev, LastName: "" }));
@@ -40,14 +40,33 @@ export const StepOne = ({ setStep }) => {
     }
   };
 
-  const onFirstNameChange = (e) =>
+  const onFirstNameChange = (e) =>{
     setFormValue({ ...formValue, firstName: e.target.value });
-  const onLastNameChange = (e) =>
+    if (!formValue.firstName || !formValue.firstName.length === 0) {
+      setErrors((prev) => ({ ...prev, firstName: "" }));
+    } 
+  }
+  const onLastNameChange = (e) =>{
     setFormValue({ ...formValue, LastName: e.target.value });
-  const onUserNameChange = (e) =>
+    if (!formValue.LastName || !formValue.LastName.length === 0) {
+      setErrors((prev) => ({ ...prev, LastName: "" }));
+    }
+  }
+  const onUserNameChange = (e) =>{
     setFormValue({ ...formValue, UserName: e.target.value });
+    if (!formValue.UserName || formValue.UserName.length === 0) {
+      setErrors((prev) => ({
+        ...prev,
+        UserName: "",
+      }));
+    }
+  }
 
+
+  
+  
   return (
+    
     <div className="flex flex-col w-[480px] min-h-[655px] p-8 bg-white rounded-lg">
       <div className="space-y-2 mb-7">
         <div className="flex">
@@ -124,5 +143,6 @@ export const StepOne = ({ setStep }) => {
         </div>
       </div>
     </div>
+    
   );
 };
