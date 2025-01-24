@@ -185,7 +185,7 @@ export const StepTwo = ({ setStep }) => {
             onChange={onPasswordChange}
             placeholder="Your User name"
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
-            type="text"
+            type="password"
             name="UserName"
             value={formValue.Password}
           />
@@ -203,7 +203,7 @@ export const StepTwo = ({ setStep }) => {
             onChange={onConfirmPasswordChange}
             placeholder="Your User name"
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
-            type="text"
+            type="password"
             name="UserName"
             value={formValue.ConfirmPassword}
           />
