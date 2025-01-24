@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react"
+
 
 export const StepThree = ({ setStep }) => {
   const [formValue, setFormValue] = useState({
@@ -8,6 +10,12 @@ export const StepThree = ({ setStep }) => {
   });
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(true); // Хэрэглэгчийн өгөгдлийг шалгах хувьсагч
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
 
   const onContinue = () => {
     let isValid = true; // Шалгалтын үр дүнг хадгалах хувьсагч
@@ -80,7 +88,7 @@ export const StepThree = ({ setStep }) => {
   }
 
   return (
-    <div className="flex flex-col w-[480px] min-h-[655px] p-8 bg-white rounded-lg">
+    <motion.div animate={{ x: [0, 100, 0] }}  className="flex flex-col w-[480px] min-h-[655px] p-8 bg-white rounded-lg">
       <div className="space-y-2 mb-7">
         <div className="flex">
           <img src="Pineconelogo.png" />
@@ -151,7 +159,7 @@ export const StepThree = ({ setStep }) => {
           <img src="right.png" />
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

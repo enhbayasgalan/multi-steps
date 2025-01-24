@@ -1,11 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react"
 
 export const StepTwo = ({ setStep }) => {
-  const [formValue, setFormValue] = useState({});
+  const [formValue, setFormValue] = useState(() => {
+    const step = localStorage.getItem("stepTwo");
+    return step ? JSON.parse(step) : {Email: "", PhoneNumber: "", Password: "", ConfirmPassword: ""};
+  });
+  console.log(formValue);
+  
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(false); // isValid нэртэй хувьсагч ашиглаж байгаа
+
+  useEffect(() => {
+    if (formValue.Email || formValue.PhoneNumber || formValue.Password || formValue.ConfirmPassword) {
+      localStorage.setItem("stepTwo", JSON.stringify(formValue));
+    }
+  }, [formValue])
+
   const checkEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const checkPhone = /^\+?\d{8}$/;
 
@@ -101,7 +114,6 @@ export const StepTwo = ({ setStep }) => {
         ...prev,
         ConfirmPassword: "" 
       }));
-      isValidForm = false;
     } 
   }
 
@@ -110,7 +122,7 @@ export const StepTwo = ({ setStep }) => {
 
   return (
     
-    <div className="flex flex-col w-[480px] min-h-[655px] p-8 bg-white rounded-lg">
+    <motion.div animate={{ x: [0, 100, 0] }} className="flex flex-col w-[480px] min-h-[655px] p-8 bg-white rounded-lg">
       <div className="space-y-2 mb-7">
         <div className="flex">
           <img src="Pineconelogo.png" />
@@ -137,6 +149,7 @@ export const StepTwo = ({ setStep }) => {
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
             type="text"
             name="firstName"
+            value={formValue.Email}
           />
           {errors.Email && <p className="text-red-500">{errors.Email}</p>}
         </div>
@@ -154,6 +167,7 @@ export const StepTwo = ({ setStep }) => {
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
             type="text"
             name="LastName"
+            value={formValue.PhoneNumber}
           />
           {errors.PhoneNumber && (
             <p className="text-red-500">{errors.PhoneNumber}</p>
@@ -173,6 +187,7 @@ export const StepTwo = ({ setStep }) => {
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
             type="text"
             name="UserName"
+            value={formValue.Password}
           />
           {errors.Password && <p className="text-red-500">{errors.Password}</p>}
         </div>
@@ -190,6 +205,7 @@ export const StepTwo = ({ setStep }) => {
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
             type="text"
             name="UserName"
+            value={formValue.ConfirmPassword}
           />
           {errors.ConfirmPassword && (
             <p className="text-red-500">{errors.ConfirmPassword}</p>
@@ -209,7 +225,7 @@ export const StepTwo = ({ setStep }) => {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
     
   );
 };

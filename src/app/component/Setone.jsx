@@ -1,41 +1,55 @@
 "use client";
 
 import { getFallbackRouteParams } from "next/dist/server/request/fallback-params";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion } from "motion/react"
 
 export const StepOne = ({ setStep }) => {
-  const [formValue, setFormValue] = useState({});
+  const [formValue, setFormValue] = useState(() => {
+    // localStorage-оос авсан утгыг JSON.parse ашиглан хөрвүүлэх
+    const step = localStorage.getItem("stepOne");
+    return step ? JSON.parse(step) : { firstName: "", LastName: "", UserName: "" }; // initial values
+  });
+  console.log(formValue);
+  
   const [errors, setErrors] = useState({});
   const [a, seta] = useState(false);
 
+  useEffect(() => {
+    // formValue өөрчлөгдсөн үед lcoalStorage-д хадгалах
+    if (formValue.firstName || formValue.LastName || formValue.UserName) {
+      localStorage.setItem("stepOne", JSON.stringify(formValue));
+    }
+  }, [formValue]); // formValue-ийг хамааруулсан байна, өөрчлөгдөх бүрт хадгалагдана
+
   const onContinue = () => {
+    let valid = true; // validate flag
     if (!formValue.firstName || formValue.firstName.length === 0) {
       setErrors((prev) => ({ ...prev, firstName: "Нэрээ оруулна уу" }));
-      seta(false);
-      
+      valid = false;
     } else {
       setErrors((prev) => ({ ...prev, firstName: "" }));
-      seta(true); 
     }
+
     if (!formValue.LastName || formValue.LastName.length === 0) {
       setErrors((prev) => ({ ...prev, LastName: "Овгоо оруулна уу." }));
-      seta(false);
+      valid = false;
     } else {
       setErrors((prev) => ({ ...prev, LastName: "" }));
-      seta(true);
     }
+
     if (!formValue.UserName || formValue.UserName.length === 0) {
       setErrors((prev) => ({
         ...prev,
         UserName: "Хэрэглэгчийн нэрээ оруулна уу",
       }));
-      seta(false);
+      valid = false;
     } else {
       setErrors((prev) => ({ ...prev, UserName: "" }));
-      seta(true);
     }
-    console.log(a);
-    if (a) {
+
+    if (valid) {
+      seta(true);
       setStep(2);
     }
   };
@@ -62,12 +76,13 @@ export const StepOne = ({ setStep }) => {
     }
   }
 
+  
 
   
   
   return (
     
-    <div className="flex flex-col w-[480px] min-h-[655px] p-8 bg-white rounded-lg">
+    <motion.div animate={{ x: [0, 100, 0] }} className="flex flex-col w-[480px] min-h-[655px] p-8 bg-white rounded-lg">
       <div className="space-y-2 mb-7">
         <div className="flex">
           <img src="Pineconelogo.png" />
@@ -93,6 +108,8 @@ export const StepOne = ({ setStep }) => {
             placeholder="Your first name"
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
             name="firstName"
+            value={formValue.firstName
+            }
           />
           {errors.firstName ? (
             <p className="text-red-500">{errors.firstName}</p>
@@ -113,6 +130,7 @@ export const StepOne = ({ setStep }) => {
             placeholder="Your last name"
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
             name="LastName"
+            value={formValue.LastName}
           />
           {errors.LastName && <p className="text-red-500">{errors.LastName}</p>}
         </div>
@@ -129,6 +147,7 @@ export const StepOne = ({ setStep }) => {
             placeholder="Your User name"
             className="w-full p-3 text-base leading-5 rounded-md outline outline-[#CBD5E1] text-[#121316]"
             name="UserName"
+            value={formValue.UserName}
           />
           {errors.UserName && <p className="text-red-500">{errors.UserName}</p>}
         </div>
@@ -142,7 +161,7 @@ export const StepOne = ({ setStep }) => {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
     
   );
 };
