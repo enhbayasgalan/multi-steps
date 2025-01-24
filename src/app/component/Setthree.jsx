@@ -75,12 +75,7 @@ export const StepThree = ({ setStep }) => {
         DayBirth: "",
       }));
     }
-    if (age < 18) {
-      setErrors((prev) => ({
-        ...prev,
-        DayBirth: "",
-      }));
-    }
+    
   };
 
   const close = () => {
