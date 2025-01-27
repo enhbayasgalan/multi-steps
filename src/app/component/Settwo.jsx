@@ -6,6 +6,7 @@ import { motion } from "motion/react"
 export const StepTwo = ({ setStep }) => {
   const [formValue, setFormValue] = useState(() => {
     const step = localStorage.getItem("stepTwo");
+    if (typeof window !== 'undefined')
     return step ? JSON.parse(step) : {Email: "", PhoneNumber: "", Password: "", ConfirmPassword: ""};
   });
   console.log(formValue);

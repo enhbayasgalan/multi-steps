@@ -8,6 +8,7 @@ export const StepOne = ({ setStep }) => {
   const [formValue, setFormValue] = useState(() => {
     // localStorage-оос авсан утгыг JSON.parse ашиглан хөрвүүлэх
     const step = localStorage.getItem("stepOne");
+    if (typeof window !== 'undefined')
     return step ? JSON.parse(step) : { firstName: "", LastName: "", UserName: "" }; // initial values
   });
   console.log(formValue);
@@ -23,7 +24,7 @@ export const StepOne = ({ setStep }) => {
   }, [formValue]); // formValue-ийг хамааруулсан байна, өөрчлөгдөх бүрт хадгалагдана
 
   const onContinue = () => {
-    let valid = true; // validate flag
+    let valid = true; 
     if (!formValue.firstName || formValue.firstName.length === 0) {
       setErrors((prev) => ({ ...prev, firstName: "Нэрээ оруулна уу" }));
       valid = false;

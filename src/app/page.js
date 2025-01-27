@@ -7,6 +7,7 @@ import { StepFour } from "./component/Setfour";
 
 export default function Home() {
   const [step, setStep] = useState(1);
+  if (typeof window !== 'undefined')
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       { step === 1 ? < StepOne  setStep={setStep} /> :<></>}
